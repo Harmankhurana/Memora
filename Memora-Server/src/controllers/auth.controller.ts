@@ -1,41 +1,36 @@
 import type { Request, Response } from "express";
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import z from 'zod';
+import bcrypt from "bcrypt";
+import z from "zod";
 
 const saltRounds = 10;
 
+const signupSchema = z.object({
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
+});
+
 export const signup = async (req: Request, res: Response): Promise<void> => {
-    const requiredBody = z.object({
-        name: z.string(),
-        email: z.string(),
-        password: z.string(),
-    });
+    const parsedData = signupSchema.safeParse(req.body);
 
-    const parsedDataWithSuccess = requiredBody.safeParse(req.body);
-
-    if(!parsedDataWithSuccess.success) {
+    if (!parsedData.success) {
         res.status(400).json({
-            message: "Incorrect format used",
+            message: "Invalid input",
+            errors: parsedData.error.flatten(),
         });
+        return;
     }
 
-    const { name, email, password } = parsedDataWithSuccess.data;
+    const { name, email, password } = parsedData.data;
 
     try {
-        // checking for the credentials passed or not
-        if (!name || !email || !password) {
-            res.status(400).json({
-                message: 'Name, Email and password are required'
-            });
-            return;
-        }
-
         const existingUser = await User.findOne({ email });
+
         if (existingUser) {
             res.status(400).json({
-                message: 'User already exists',
+                message: "User already exists",
             });
+            return;
         }
 
         const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -47,18 +42,19 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
         });
 
         res.status(201).json({
-            message: 'Your Signed Up',
+            message: "User signed up successfully",
             userId: user._id,
         });
         
-    } catch (e) {
+    } catch (error) {
+        console.error("Signup error:", error);
+
         res.status(500).json({
             message: "Something went wrong while signing up",
-            error: e,
         });
     }
-}
+};
 
 export const signin = async (req: Request, res: Response): Promise<void> => {
 
-}
+};
