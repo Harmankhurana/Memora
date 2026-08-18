@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import app from './app.js';
+import { connectDB } from './config/db.connect.js';
 
 dotenv.config();
 const PORT = process.env.PORT ?? 5000;
@@ -16,7 +17,6 @@ async function ServerStarted () {
         console.error('Failed to start server:', error);
         process.exit(1);
     }
-;
 }
 
 ServerStarted();
