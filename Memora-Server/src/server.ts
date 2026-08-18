@@ -1,22 +1,22 @@
-import express from 'express';
 import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
+import app from './app.js';
 
-const app = express();
 dotenv.config();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT ?? 5000;
 
-app.get('/api/health', async(req: Request, res: Response) => {
-    res.status(200).json({
-        status: "OK",
-    });
-});
+async function ServerStarted () {
+    try {
+        await connectDB();
 
-function ServerStarted () {
-    await connectDB();
-    app.listen(PORT, () => {
-    console.log(`Server is running on "http://localhost:${PORT}"`);
-    });
+        app.listen(PORT, () => {
+            console.log(`Server is running on "http://localhost:${PORT}"`);
+        }) 
+    } catch (error) {
+        console.error('Failed to start server:', error);
+        process.exit(1);
+    }
+;
 }
 
 ServerStarted();
