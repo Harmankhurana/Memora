@@ -44,13 +44,31 @@ export const getContent = async (req: Request, res: Response) => {
             message: "Here is you content",
             contents,
         })
-    } catch (error) {
+    } catch (e) {
         res.status(500).json({
             message: "Error occured in fetching content"
         });
     }
 } 
 
-export const deleteContent = async (req: Request, res: Response): Promise<void> => {
-    
+export const deleteContent = async (req: Request, res: Response) => {
+    // @ts-ignore
+    const contentId = req.contentId;
+
+    try {
+        const contents = await ContentModel.deleteMany({ 
+            contentId,
+            // @ts-ignore
+            userId: req.userId,
+        });
+
+        res.status(200).json({
+            message: "Deleted Content",
+        });
+
+    } catch (e) {
+        res.status(500).json({
+            message: "Something went wrong while deleting content, try again later"
+        });
+    }
 }
