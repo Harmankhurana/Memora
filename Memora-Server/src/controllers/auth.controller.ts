@@ -7,6 +7,28 @@ import { JWT_PASSWORD } from "../config/jwt.config.js";
 
 const saltRounds = 10;
 
+/*
+current signup workflow
+    Request
+       ↓
+    Zod validation
+       ↓
+    Extract name, email & password
+       ↓
+    Find existing user by email
+       ↓
+    User exists?
+       ├── Yes → Return 400 "User already exists"
+       │
+       └── No
+            ↓
+         Hash password using bcrypt
+            ↓
+         Create user in MongoDB
+            ↓
+         Return 201 + userId
+*/
+
 const signupSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters"),
     email: z.string().email("Invalid email address"),
@@ -58,6 +80,21 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
+/* 
+current signin workflow
+    Request
+      ↓
+    Zod validation
+      ↓
+    Find user
+      ↓
+    Compare bcrypt password
+      ↓
+    Generate JWT
+      ↓
+    Return token
+*/
+
 const signinSchema = z.object({
     email: z.string().email("Invalid email address"),
     password: z.string().min(8, "Password must be at least 8 characters"),
@@ -105,7 +142,7 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
         res.status(200).json({
             token,
         });
-        
+
     } catch (error) {
         console.error("Signin error:", error);
 
