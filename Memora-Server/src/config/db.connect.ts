@@ -8,5 +8,5 @@ export async function connectDB(): Promise<void> {
     }
 
     await mongoose.connect(url);
-    console.log('MongoDB Connected')
+    console.log('MongoDB Connected with backend server')
 }
