@@ -29,39 +29,32 @@ const contentTypes = [
     "Image",
 ];
 
-const contentSchema = new Schema(
-    {
-        link: {
-            type: String,
-            required: true,
-        },
-
-        type: {
-            type: String,
-            enum: contentTypes,
-            required: true,
-        },
-
-        title: {
-            type: String,
-            required: true,
-        },
-
-        tags: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: "Tag",
-            },
-        ],
-
-        userId: {
-            type: Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-        },
+const contentSchema = new Schema({
+    link: {
+        type: String,
+        required: true,
     },
-    { timestamps: true }
-);
+    type: {
+        type: String,
+        enum: contentTypes,
+        required: true,
+    },
+    title: {
+        type: String,
+        required: true,
+    },
+    tags: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Tag",
+        },
+    ],
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+    },
+}, { timestamps: true });
 
 const TagModel = model("Tag", tagSchema);
 const LinkModel = model("Link", linkSchema);
