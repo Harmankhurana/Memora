@@ -1,5 +1,7 @@
 import type { Request, Response } from "express";
 import { LinkModel } from "../models/content.model.js";
+import { ContentModel } from "../models/content.model.js";
+import { UserModel } from "../models/user.model.js";
 import { randomLink } from "../utils/randomLink.utils.js";
 
 export const postShareLink = async(req: Request, res: Response) => {
