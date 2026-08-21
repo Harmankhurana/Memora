@@ -46,5 +46,34 @@ export const postShareLink = async(req: Request, res: Response) => {
 }
 
 export const getShareLink = async(req: Request, res: Response) => {
+    const hash = req.params.sharelink;
+    // @ts-ignore
+    const link = await LinkModel.findOne({ hash });
 
+    if(!link) {
+        res.status(411).json({
+            message: "Sorry incorrect input used",
+        });
+        return;
+    }
+
+    const content = await ContentModel.find({
+        userId: link.userId,
+    });
+
+    const user = await UserModel.find({
+        _id: link.userId,
+    });
+
+    if(!user) {
+        res.json({
+            message: "user not found, error should ideally not happen",
+        });
+    }
+
+    res.status(200).json({
+        // @ts-ignore
+        username: user?.username,
+        content: content
+    })
 }
